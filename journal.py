@@ -99,15 +99,15 @@ def entry_print(data):
     print()
 
 def entry_update(data):
-    entry_index = entry_list(data)
-    selected_entry = input('Which entry would you like to view: ')
-    printed_entry = entry_index[int(selected_entry) - 1]
-    print('Entry {} contains the following text: '.format(printed_entry))
-    print(str(data[printed_entry]['text']))
+    entry_list(data)
+    selected_entry = int(input('Which entry would you like to view: '))
+    index_target = selected_entry -1
+    print('Entry {} contains the following text: '.format(data[index_target]['title']))
+    print(str(data[index_target]['content']))
     updated_entry = input('Enter updated text: ')
-    data[printed_entry]['content'] = updated_entry
-    data[printed_entry]['updated'] = datetime.datetime.now()
-    print('Updated text: {}'.format(str(data[printed_entry]['content'])))
+    data[index_target]['content'] = updated_entry
+    data[index_target]['updated'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print('Updated text: {}'.format(str(data[index_target]['content'])))
 
 def open_journal(jfile):
     # open the file, create if not present
