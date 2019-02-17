@@ -14,7 +14,7 @@ def banner():
     print('-----------------------------------')
 
 def menu():
-    user_choice = input("Would you like to [A]dd, [L]ist, [R]emove journal entries or E[x]it: ").lower().strip()
+    user_choice = input("Would you like to [A]dd, [L]ist, [R]emove, [P]rint, [U]pdate journal entries or E[x]it: ").lower().strip()
     return user_choice
 
 def run_event_loop(journal_file):
@@ -40,6 +40,13 @@ def run_event_loop(journal_file):
             # remove entry
             entry_remove(journal_data)
             write_journal(journal_data,journal_file)
+        elif menu_entry == 'p':
+            # print the text of the entry
+            entry_print(journal_data)
+        elif menu_entry == 'u':
+            # update text of entry
+            entry_update(journal_data)
+            write_journal( journal_data, journal_file)
         elif menu_entry != 'x':
             print('Sorry but {} is not a choice at this time please choose again'.format(menu_entry))
 
@@ -80,6 +87,30 @@ def entry_remove(data):
         print('Journal removal error, key {} not present'.format(idx + 1))
     return data
 
+def entry_print(data):
+    entry_index = entry_list(data)
+    if len(entry_index) == 0:
+        print('Journal is empty')
+        return
+
+    selected_entry = input('Which entry would you like to view: ')
+    print()
+    printed_entry = entry_index[int(selected_entry) - 1]
+    print('Entry {} contains the following text: '.format(printed_entry))
+    print(str(data[printed_entry]['text']))
+    print('Created on: {}'.format(str(data[printed_entry]['date'])))
+    print()
+
+def entry_update(data):
+    entry_index = entry_list(data)
+    selected_entry = input('Which entry would you like to view: ')
+    printed_entry = entry_index[int(selected_entry) - 1]
+    print('Entry {} contains the following text: '.format(printed_entry))
+    print(str(data[printed_entry]['text']))
+    updated_entry = input('Enter updated text: ')
+    data[printed_entry]['text'] = updated_entry
+    data[printed_entry]['updated'] = datetime.datetime.now()
+    print('Updated text: {}'.format(str(data[printed_entry]['text'])))
 
 def open_journal(jfile):
     # open the file, create if not present
