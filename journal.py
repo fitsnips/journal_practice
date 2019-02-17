@@ -22,7 +22,7 @@ def run_event_loop(journal_file):
     # set to False for init value of loop
     menu_entry = False
 
-    # journal data, empty dict until we get json added.
+    # journal data, empty array until we get json added.
 
     journal_data = open_journal(journal_file)
 
@@ -39,66 +39,63 @@ def run_event_loop(journal_file):
         elif menu_entry == 'r':
             # remove entry
             entry_remove(journal_data)
-            write_journal(journal_data,journal_file)
+            #write_journal(journal_data,journal_file)
         elif menu_entry == 'p':
             # print the text of the entry
             entry_print(journal_data)
         elif menu_entry == 'u':
             # update text of entry
             entry_update(journal_data)
-            write_journal( journal_data, journal_file)
+            #write_journal( journal_data, journal_file)
         elif menu_entry != 'x':
             print('Sorry but {} is not a choice at this time please choose again'.format(menu_entry))
+
+    write_journal( journal_data, journal_file )
 
 
 
 def entry_add(data):
     entry_title = input('Enter title for your entry: ')
     entry_text = input('Enter {} data: '.format(entry_title))
-    entry_date = datetime.datetime.now()
-    data[entry_title] = {
-        'text': entry_text,
+    entry_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    data.append ( {
+        'title': entry_title,
+        'content': entry_text,
         'date': entry_date
-    }
+    })
+
     return data
 
 def entry_list(data):
-    # keep a key to number index, for human interaction
-    data_index = []
 
     if not data:
         print('Journal is empty')
         return
 
     for idx,entry in enumerate(data):
-        data_index.append(entry)
-    for count,key in enumerate(data_index):
-        print(str(count +1) + ": " + key)
+        print(str(idx +1) + ": " + str(entry['title']))
 
-    return data_index
 
 def entry_remove(data):
-    data_index = entry_list(data)
-    remove_item = input('Which item number would you like to remove: ')
-    remove_key = data_index[int(remove_item) - 1]
+    entry_list(data)
+    remove_item = int(input('Which item number would you like to remove: '))
     try:
-        del data[remove_key]
+        del data[remove_item -1]
     except KeyError:
-        print('Journal removal error, key {} not present'.format(idx + 1))
+        print('Journal removal error, index {} not present'.format(remove_item))
     return data
 
 def entry_print(data):
-    entry_index = entry_list(data)
-    if len(entry_index) == 0:
+    if len(data) == 0:
         print('Journal is empty')
         return
-
-    selected_entry = input('Which entry would you like to view: ')
+    entry_list(data)
+    selected_entry = int(input('Which entry would you like to view: '))
+    index_target = selected_entry -1
     print()
-    printed_entry = entry_index[int(selected_entry) - 1]
-    print('Entry {} contains the following text: '.format(printed_entry))
-    print(str(data[printed_entry]['text']))
-    print('Created on: {}'.format(str(data[printed_entry]['date'])))
+    print('Entry {} contains the following text: '.format(data[index_target]['title']))
+    print(str(data[index_target]['content']))
+    print('Created on: {}'.format(str(data[index_target]['date'])))
     print()
 
 def entry_update(data):
@@ -108,13 +105,13 @@ def entry_update(data):
     print('Entry {} contains the following text: '.format(printed_entry))
     print(str(data[printed_entry]['text']))
     updated_entry = input('Enter updated text: ')
-    data[printed_entry]['text'] = updated_entry
+    data[printed_entry]['content'] = updated_entry
     data[printed_entry]['updated'] = datetime.datetime.now()
-    print('Updated text: {}'.format(str(data[printed_entry]['text'])))
+    print('Updated text: {}'.format(str(data[printed_entry]['content'])))
 
 def open_journal(jfile):
     # open the file, create if not present
-    data = {}
+    data = []
 
     try:
         with open(jfile, 'r+') as input:
@@ -125,6 +122,7 @@ def open_journal(jfile):
     return data
 
 def write_journal(data,jfile):
+    #print(json.dumps(data, sort_keys=True, indent=4, default=str ))
     try:
         with open(jfile, 'w') as outfile:
            json.dump(data, outfile, sort_keys=True, indent=4, default=str )
