@@ -1,4 +1,4 @@
-
+import datetime
 
 def main():
     banner()
@@ -19,15 +19,30 @@ def run_event_loop():
     # set to False for init value of loop
     menu_entry = False
 
+    # journal data, empty dict until we get json added.
+    journal_data = {}
+
     while menu_entry != 'x':
         menu_entry = menu()
 
         if menu_entry == 'a':
             # Add a item
-            print('Adding a item')
+            journal_data = entry_add(journal_data)
+            print(journal_data)
         elif menu_entry != 'x':
             print('Sorry but {} is not a choice at this time please choose again'.format(menu_entry))
 
+
+
+def entry_add(data):
+    entry_title = input('Enter title for your entry: ')
+    entry_text = input('Enter {} data: '.format(entry_title))
+    entry_date = datetime.datetime.now()
+    data[entry_title] = {
+        'text': entry_text,
+        'date': entry_date
+    }
+    return data
 
 if __name__ == '__main__':
     main()
