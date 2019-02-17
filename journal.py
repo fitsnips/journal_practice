@@ -11,7 +11,7 @@ def banner():
     print('-----------------------------------')
 
 def menu():
-    user_choice = input("Would you like to [A]dd journal entry or E[x]it: ").lower().strip()
+    user_choice = input("Would you like to [A]dd, [L]ist journal entries or E[x]it: ").lower().strip()
     return user_choice
 
 def run_event_loop():
@@ -28,7 +28,9 @@ def run_event_loop():
         if menu_entry == 'a':
             # Add a item
             journal_data = entry_add(journal_data)
-            print(journal_data)
+        elif menu_entry == 'l':
+            # list entries
+            entry_list(journal_data)
         elif menu_entry != 'x':
             print('Sorry but {} is not a choice at this time please choose again'.format(menu_entry))
 
@@ -43,6 +45,12 @@ def entry_add(data):
         'date': entry_date
     }
     return data
+
+def entry_list(data):
+    for idx,key in enumerate(data):
+        # add one to index for humans
+        print(str(idx +1 ) + ": "  + key)
+
 
 if __name__ == '__main__':
     main()
