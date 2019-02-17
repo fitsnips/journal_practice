@@ -14,7 +14,7 @@ def banner():
     print('-----------------------------------')
 
 def menu():
-    user_choice = input("Would you like to [A]dd, [L]ist journal entries or E[x]it: ").lower().strip()
+    user_choice = input("Would you like to [A]dd, [L]ist, [R]emove journal entries or E[x]it: ").lower().strip()
     return user_choice
 
 def run_event_loop(journal_file):
@@ -36,6 +36,10 @@ def run_event_loop(journal_file):
         elif menu_entry == 'l':
             # list entries
             entry_list(journal_data)
+        elif menu_entry == 'r':
+            # remove entry
+            entry_remove(journal_data)
+            write_journal(journal_data,journal_file)
         elif menu_entry != 'x':
             print('Sorry but {} is not a choice at this time please choose again'.format(menu_entry))
 
@@ -52,9 +56,30 @@ def entry_add(data):
     return data
 
 def entry_list(data):
-    for idx,key in enumerate(data):
-        # add one to index for humans
-        print(str(idx +1 ) + ": "  + key)
+    # keep a key to number index, for human interaction
+    data_index = []
+
+    if not data:
+        print('Journal is empty')
+        return
+
+    for idx,entry in enumerate(data):
+        data_index.append(entry)
+    for count,key in enumerate(data_index):
+        print(str(count +1) + ": " + key)
+
+    return data_index
+
+def entry_remove(data):
+    data_index = entry_list(data)
+    remove_item = input('Which item number would you like to remove: ')
+    remove_key = data_index[int(remove_item) - 1]
+    try:
+        del data[remove_key]
+    except KeyError:
+        print('Journal removal error, key {} not present'.format(idx + 1))
+    return data
+
 
 def open_journal(jfile):
     # open the file, create if not present
